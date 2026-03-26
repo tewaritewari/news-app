@@ -1,12 +1,16 @@
 name: Build APK
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
@@ -15,10 +19,13 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Accept Android licenses
+        run: yes | flutter doctor --android-licenses
 
       - name: Build APK
         run: flutter build apk --release
